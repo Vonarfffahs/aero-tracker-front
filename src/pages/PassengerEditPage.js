@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Card, Form, FloatingLabel, Button, InputGroup } from 'react-bootstrap';
+import { Container, Card, Form, FloatingLabel, Button, InputGroup, CloseButton } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
 import { deletePassenger, fetchOnePassenger, updatePassenger } from '../http/passengerAPI';
 import { PASSENGER_LIST_ROUTE, PASSENGER_ROUTE } from '../utils/consts';
@@ -41,7 +41,11 @@ const PassengerEditPage = () => {
             className='d-flex justify-content-center mt-4'
         >
             <Card style={{width: 600}} className='p-3'>
-                <h2 className='m-auto'>Passenger with passport №{id}</h2>
+                <h2 className='mt-2'>Passenger with passport №{id}</h2>
+                <CloseButton 
+                    style={{"position": 'absolute', 'right': '8px', 'top': '8px'}}
+                    onClick={() => navigate(PASSENGER_LIST_ROUTE)}
+                />
                 <Form>
                     <InputGroup className="mt-2">
                         <FloatingLabel 

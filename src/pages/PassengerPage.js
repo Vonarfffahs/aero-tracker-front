@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Card, Form, FloatingLabel, Button, InputGroup, ListGroup } from 'react-bootstrap';
+import { Container, Card, Form, FloatingLabel, Button, InputGroup, ListGroup, CloseButton } from 'react-bootstrap';
 import { fetchFlights } from '../http/flightAPI';
 import { useNavigate, useParams } from 'react-router-dom';
 import { deletePassenger, fetchOnePassenger } from '../http/passengerAPI';
@@ -48,6 +48,10 @@ const PassengerPage = () => {
         >
             <Card style={{width: 600}} className='p-3'>
                 <h2 className='m-auto'>Passenger with passport №{passenger.passport_id}</h2>
+                <CloseButton 
+                    style={{"position": 'absolute', 'right': '8px', 'top': '8px'}}
+                    onClick={() => navigate(PASSENGER_LIST_ROUTE)}
+                />
                 <Form>
                     <InputGroup className="mt-2">
                         <FloatingLabel 
