@@ -1,7 +1,19 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { ListGroup, FloatingLabel, Form, InputGroup } from 'react-bootstrap'
 
-const FlightRegistrationInfo = ({ flightInfo, registrationInfo }) => {
+const FlightEditRegInfo = ({ flightInfo, registrationInfo }) => {
+    const [tiket, setTiket] = useState('');
+    const [visa, setVisa] = useState('');
+    const [baggage, setBaggage] = useState('');
+    const [flightPermission, setFlightPermission] = useState('');
+
+    useEffect(() => {
+        setTiket(registrationInfo.tiket);
+        setVisa(registrationInfo.visa);
+        setBaggage(registrationInfo.baggage);
+        setFlightPermission(registrationInfo.flight_permission);
+    }, [registrationInfo]);
+
   return (
     <ListGroup.Item key={flightInfo.id} className='mb-1' variant="primary">
         <h5>Flight №{flightInfo.id}</h5>
@@ -42,32 +54,36 @@ const FlightRegistrationInfo = ({ flightInfo, registrationInfo }) => {
                 controlId="visa"
                 label="Visa"
             >
-                <Form.Control 
-                    type="text" 
-                    value={registrationInfo.visa ? 'Yes' : 'No'}
-                    readOnly
-                />
+                <Form.Select
+                    value={visa}
+                    onChange={(e) => setVisa(e.target.value)}
+                >
+                    <option value={false}>No</option>
+                    <option value={true}>Yes</option>
+                </Form.Select>
             </FloatingLabel>
             <FloatingLabel
                 controlId="baggage"
-                label="Baggage weight, kg"
+                label="Baggage, kg"
             >
                 <Form.Control 
                     type='text'
                     maxLength='3'
-                    value={registrationInfo.baggage}
-                    readOnly
+                    value={baggage}
+                    onChange={(e) => setBaggage(e.target.value)}
                 />
             </FloatingLabel>
             <FloatingLabel
                 controlId="flightPermission"
                 label="Flight Permission"
             >
-                <Form.Control 
-                    type="text" 
-                    value={registrationInfo.flight_permission ? 'Yes' : 'No'}
-                    readOnly
-                />
+                <Form.Select
+                    value={flightPermission}
+                    onChange={(e) => setFlightPermission(e.target.value)}
+                >
+                    <option value={false}>No</option>
+                    <option value={true}>Yes</option>
+                </Form.Select>
             </FloatingLabel>
             <FloatingLabel
                 controlId="ticketNumber"
@@ -76,8 +92,8 @@ const FlightRegistrationInfo = ({ flightInfo, registrationInfo }) => {
                 <Form.Control
                     type="text" 
                     maxLength="4"
-                    value={registrationInfo.tiket}
-                    readOnly  
+                    value={tiket}
+                    onChange={(e) => setTiket(e.target.value)}    
                 />
             </FloatingLabel>
         </InputGroup>
@@ -85,4 +101,4 @@ const FlightRegistrationInfo = ({ flightInfo, registrationInfo }) => {
   )
 }
 
-export default FlightRegistrationInfo
+export default FlightEditRegInfo

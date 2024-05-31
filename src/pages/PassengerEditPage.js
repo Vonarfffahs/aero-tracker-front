@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Card, Form, FloatingLabel, Button, InputGroup, CloseButton } from 'react-bootstrap';
+import { Container, Card, Form, FloatingLabel, Button, InputGroup, CloseButton, ListGroup } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
 import { deletePassenger, fetchOnePassenger, updatePassenger } from '../http/passengerAPI';
 import { PASSENGER_LIST_ROUTE, PASSENGER_ROUTE } from '../utils/consts';
+import { fetchRegistrations } from '../http/registerAPI';
+import { fetchFlights } from '../http/flightAPI';
+import FlightEditRegInfo from '../components/FlightEditRegInfo';
 
 const PassengerEditPage = () => {
     const { id } = useParams();
@@ -12,6 +15,9 @@ const PassengerEditPage = () => {
     const [patronymic, setPatronymic] = useState('');
     const [wanted, setWanted] = useState(false);
 
+    const [flights, setFlights] = useState([]);
+    const [registrations, setRegistrations] = useState([]);
+
     useEffect(() => {
         fetchOnePassenger(id).then(data => {
             setFirstName(data.first_name);
@@ -19,6 +25,17 @@ const PassengerEditPage = () => {
             setPatronymic(data.patronymic);
             setWanted(data.wanted);
         });
+        fetchFlights().then(data => {
+            data.map(item => {
+                const serverDate = new Date(item.date);
+                const serverDateTime = serverDate.getHours();
+                serverDate.setHours(serverDateTime+3);
+                const formattedDate = serverDate.toISOString().slice(0, 16);
+                item.date = formattedDate;
+            });
+            setFlights(data);
+        });
+        fetchRegistrations().then(data => setRegistrations(data));
     }, []);
 
     const savePassenger = async () => {
@@ -31,6 +48,14 @@ const PassengerEditPage = () => {
         navigate(PASSENGER_ROUTE + '/' + id);
     };
 
+    const flightsInfo = registrations
+        .filter(item => item.passengerPassportId === id)
+        .map(item => {
+            const flight = flights.find(f => f.id === item.flightId);
+            return flight ? <FlightEditRegInfo key={item.id} flightInfo={flight} registrationInfo={item} /> : null;
+        }
+    );
+
     const removePassenger = async () => {
         await deletePassenger(id);
         navigate(PASSENGER_LIST_ROUTE);
@@ -38,7 +63,7 @@ const PassengerEditPage = () => {
 
     return (
         <Container 
-            className='d-flex justify-content-center mt-4'
+            className='d-flex justify-content-center mt-4 mb-4'
         >
             <Card style={{width: 600}} className='p-3'>
                 <h2 className='mt-2'>Passenger with passport №{id}</h2>
@@ -98,6 +123,11 @@ const PassengerEditPage = () => {
                         </Form.Select>
                     </FloatingLabel>
                     </InputGroup>
+                    <hr/>
+                        <h4>Flight Registrations:</h4>
+                        <ListGroup>
+                            {flightsInfo}
+                        </ListGroup>
                     <hr/>
                     <Form.Group className='d-flex justify-content-center align-items-center'>
                         <Button 
